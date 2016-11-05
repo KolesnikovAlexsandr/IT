@@ -17,7 +17,7 @@ def main():
         x.append( i )
         y.append(x_3( i ))
         i = i + 0.1
-        ds.addSample(x[x.len],y[y.len])
+        ds.addSample(i,x_3(i))
     network = buildNetwork(1, 1, 1)
 
     print x
