@@ -1,0 +1,15 @@
+Each char-letter is covered with curved brackets{}.
+
+Char-not letter is covered with brackets "".
+
+Chars are divided by comma ,
+
+Example
+
+Text:   The shining sun, the blue water broke all the plans.
+
+
+
+{T},{h},{e}," ",{s},{h},{i},{n},{i},{n},{g}," ",{s},{u},{n},", ",{t},{h},{e}," ",
+{b},{l},{u},{e}," ",{w},{a},{t},{e},{r}," ",{b},{r},{o},{k},{e}," ",{a},{l},{l}," ",{t},{h},{e}," ",
+{p},{l},{a},{n},{s},"."
