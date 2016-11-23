@@ -2,8 +2,8 @@ from pybrain.tools.shortcuts import buildNetwork
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets import SupervisedDataSet
 from pybrain.structure import FullConnection
-from pybrain.structure import SoftmaxLayer
-from pybrain.structure import TanhLayer
+from pybrain.structure import SigmoidLayer
+from pybrain.structure import LinearLayer
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -40,12 +40,24 @@ def make_data():
 
     file.close()
 
+def indexMax(mass):
+    i = 0
+    index = 0
+    max = mass[0]
+    while i < len(mass):
+        if max < mass[i]:
+            index = i
+            max = mass[i]
+        i=i+1
+    return index
+
+
 
 
 def main():
     make_data()
 
-    network = buildNetwork(48 ,1, 26 , hiddenclass=TanhLayer )
+    network = buildNetwork(48 , 26 )
 
     trainer = BackpropTrainer(network, ds)
 
@@ -53,8 +65,8 @@ def main():
     trainer.trainEpochs(500)
 
     counter = 0
-    t = network.activate([1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1])
-    print t
+    t = network.activate([1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,0,1,0,0,1,0,0,1,0])
+    print TableZamena[indexMax(t)]
 
 
 main()
