@@ -4,6 +4,7 @@ from pybrain.datasets import SupervisedDataSet
 from pybrain.structure import FullConnection
 from pybrain.structure import SigmoidLayer
 from pybrain.structure import LinearLayer
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,7 +12,7 @@ TableZamena = []
 
 ds = SupervisedDataSet(48, 26)
 
-network = buildNetwork(48 , 26 )
+network = buildNetwork(48 , 26 , outclass=SigmoidLayer)
 def make_data():
 
     trash = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -35,6 +36,8 @@ def make_data():
                 b = b + 1
 
             ds.addSample(lineElement, trash)
+            i = 0
+            j = 0
             trash[counter] = 0
 
             counter = counter + 1
@@ -58,7 +61,7 @@ def indexMax(mass):
 
 def trainNetworck():
     trainer = BackpropTrainer(network, ds)
-    trainer.trainEpochs(1000)
+    trainer.trainUntilConvergence()
 
 
 def work():
