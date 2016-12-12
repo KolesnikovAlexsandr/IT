@@ -4,6 +4,8 @@ from pybrain.datasets import SupervisedDataSet
 from pybrain.structure import FullConnection
 from pybrain.structure import SigmoidLayer
 from pybrain.structure import LinearLayer
+import webbrowser
+import speech_recognition as sr
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +14,7 @@ TableZamena = []
 
 ds = SupervisedDataSet(48, 26)
 
-network = buildNetwork(48 , 26 , outclass=SigmoidLayer)
+network = buildNetwork(48 , 26 )
 def make_data():
 
     trash = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -83,6 +85,7 @@ def work():
             trash[counter] = int(string[i])
             counter = counter + 1
         elif string[i] == "}" or counter == 48:
+            #print network.activate(trash)
             result = result + TableZamena[indexMax(network.activate(trash))]
             counter = 0
         elif string[i] == '"' and string[i+1] == " " and string[i+2] == '"':
@@ -94,15 +97,36 @@ def work():
     print result
 
 def main():
-    make_data()
+    '''make_data()
     trainNetworck()
-    trash = [1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1]
-    print TableZamena[indexMax(network.activate(trash))]
+    trash = [1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1]
+    print TableZamena[indexMax(network.activate(trash))] #E
     trash = [1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,1,0,1,1,1,0,1]
     print TableZamena[indexMax(network.activate(trash))]
-    trash = [1,1,1,1,0,0,1,0,0,0,1,0,1,0,0,0,0,1,1,0,0,0,1,1,1,1,1,1,0,0,1,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0]
-    print TableZamena[indexMax(network.activate(trash))]
+    trash = [1,1,1,1,1,1,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0]
+    print TableZamena[indexMax(network.activate(trash))]#T
     work()
+    Chrome = webbrowser.MacOSX('default')
+    url = 'http://www.vk.com/'
+    Chrome.open_new_tab(url)'''
+
+
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Say something!")
+        audio = r.listen(source)
+
+# Speech recognition using Google Speech Recognition
+    try:
+        # for testing purposes, we're just using the default API key
+        # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+        # instead of `r.recognize_google(audio)`
+        print("You said: " + r.recognize_google(audio))
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+
 
 
 main()
