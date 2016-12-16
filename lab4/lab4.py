@@ -1,21 +1,11 @@
-from pybrain.tools.shortcuts import buildNetwork
-from pybrain.supervised.trainers import BackpropTrainer
-from pybrain.datasets import SupervisedDataSet
-from pybrain.structure import FullConnection
-from pybrain.structure import SigmoidLayer
-from pybrain.structure import LinearLayer
-import webbrowser
-import speech_recognition as sr
+
+import neurolab as nl
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pylab as pl
 
-TableZamena = []
-
-ds = SupervisedDataSet(48, 26)
-
-network = buildNetwork(48 , 26 )
-def make_data():
+def make_data(Zamena , DataIn ):
 
     trash = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -30,21 +20,20 @@ def make_data():
 
             trash[counter] = 1
 
-            TableZamena.append(lineElement.pop(0)[0])
+            Zamena.append(lineElement.pop(0)[0])
 
             b = 0
             while b < len(lineElement):
                 lineElement[b] = int(lineElement[b])
                 b = b + 1
 
-            ds.addSample(lineElement, trash)
+            DataIn.append(lineElement)
             i = 0
             j = 0
             trash[counter] = 0
 
             counter = counter + 1
         number_of_line = number_of_line + 1
-
     file.close()
 
 def indexMax(mass):
@@ -61,12 +50,7 @@ def indexMax(mass):
 
 
 
-def trainNetworck():
-    trainer = BackpropTrainer(network, ds)
-    trainer.trainUntilConvergence()
-
-
-def work():
+def work(Data):
     trash = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0]
     file = open('Neural_network_homework.txt', 'r')
@@ -85,11 +69,9 @@ def work():
             trash[counter] = int(string[i])
             counter = counter + 1
         elif string[i] == "}" or counter == 48:
-            #print network.activate(trash)
-            result = result + TableZamena[indexMax(network.activate(trash))]
+            Data.append(trash)
             counter = 0
         elif string[i] == '"' and string[i+1] == " " and string[i+2] == '"':
-            result = result + " "
             i=i+2
 
         i = i + 1
@@ -97,35 +79,37 @@ def work():
     print result
 
 def main():
-    '''make_data()
-    trainNetworck()
-    trash = [1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1]
-    print TableZamena[indexMax(network.activate(trash))] #E
-    trash = [1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,1,0,1,1,1,0,1]
-    print TableZamena[indexMax(network.activate(trash))]
-    trash = [1,1,1,1,1,1,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0]
-    print TableZamena[indexMax(network.activate(trash))]#T
-    work()
-    Chrome = webbrowser.MacOSX('default')
-    url = 'http://www.vk.com/'
-    Chrome.open_new_tab(url)'''
+    TableZamena = []
+    DataTrain = []
+    DataOut = []
+    make_data(TableZamena,DataTrain)
 
+    DataTrain = np.asfarray(DataTrain)
+    DataTrain[DataTrain == 0] = -1
+    net = nl.net.newhop(DataTrain)
+    DataOut = net.sim(DataTrain)
+    DataWork = []
+    #work( net , TableZamena , DataTrain , DataOut )
+    j = 0
+    while j < 26:
+        out = net.sim([DataTrain[j]])
+        print ((out[0] == DataOut[0]).all(), TableZamena[j], len(net.layers[0].outs))
+        j=j+1
+    work(DataWork)
+    k = 0
+    test = []
+    result = ""
+    print DataWork
+    a = DataWork[0]
+    trash = net.sim(a)
+    test = np.asfarray(trash)
+    test[test == 0] = -1
+    while k < 26:
+        if (test[0] == DataOut[j]).all():
+            result = result + TableZamena[j]
+            print result
+        k=k+1
 
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Say something!")
-        audio = r.listen(source)
-
-# Speech recognition using Google Speech Recognition
-    try:
-        # for testing purposes, we're just using the default API key
-        # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-        # instead of `r.recognize_google(audio)`
-        print("You said: " + r.recognize_google(audio))
-    except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
-    except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
 
